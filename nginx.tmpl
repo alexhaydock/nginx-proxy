@@ -43,6 +43,9 @@ map $http_upgrade $proxy_connection {
   '' close;
 }
 
+# Don't send Nginx server version string
+server_tokens off;
+
 # Apply fix for very long server names
 server_names_hash_bucket_size 128;
 
