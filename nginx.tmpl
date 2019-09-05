@@ -184,6 +184,9 @@ upstream {{ $upstream_name }} {
 {{/* Get the TOR_HOST value if defined by containers w/ the same vhost, falling back to "none" */}}
 {{ $tor_host := or (first (groupByKeys $containers "Env.TOR_HOST")) "none" }}
 
+{{/* Get the SERVER_TOKEN value if defined by containers w/ the same vhost, falling back to "none" */}}
+{{ $server_token := or (first (groupByKeys $containers "Env.SERVER_TOKEN")) "none" }}
+
 {{/* Get the best matching cert  by name for the vhost. */}}
 {{ $vhostCert := (closest (dir "/etc/nginx/certs") (printf "%s.crt" $host))}}
 
@@ -286,6 +289,10 @@ server {
 
 	# Clear some revealing headers
 	more_clear_headers "X-Powered-By";
+
+	{{ if ne $server_token "none" }}
+	more_set_headers    "Server: {{ $server_token }}";
+	{{ end }}
 
 	location / {
 		{{ if eq $proto "uwsgi" }}
