@@ -284,6 +284,9 @@ server {
 	if ($torExit) { return 301 http://{{ $tor_host }}$request_uri; }
 	{{ end }}
 
+	# Clear some revealing headers
+	more_clear_headers "X-Powered-By";
+
 	location / {
 		{{ if eq $proto "uwsgi" }}
 		include uwsgi_params;
@@ -330,6 +333,9 @@ server {
 	{{ else if (exists "/etc/nginx/vhost.d/default") }}
 	include /etc/nginx/vhost.d/default;
 	{{ end }}
+
+	# Clear some revealing headers
+	more_clear_headers "X-Powered-By";
 
 	location / {
 		{{ if eq $proto "uwsgi" }}
